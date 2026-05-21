@@ -3,7 +3,8 @@ import requests
 from utils.api_helpers import (
     login,
     get_headers,
-    get_admin_profile
+    get_admin_profile,
+    assert_error,
 )
 
 BASE_URL = "https://secby.ru"
@@ -48,7 +49,6 @@ def test_user_cannot_access_admin_profile(test_user):
     )
 
     token = login_response.json()["access_token"]
-
     headers = get_headers(token)
 
     admin_login = login(
@@ -59,11 +59,9 @@ def test_user_cannot_access_admin_profile(test_user):
     assert admin_login.status_code == 200
 
     admin_token = admin_login.json()["access_token"]
-
     admin_headers = get_headers(admin_token)
 
     admin_profile = get_admin_profile(admin_headers)
-
     admin_id = admin_profile.json()["profile"]["id"]
 
     response = requests.get(
@@ -75,8 +73,11 @@ def test_user_cannot_access_admin_profile(test_user):
     print(response.status_code)
     print(response.text)
 
-    # negative test
-    assert response.status_code in [401, 403]
+    assert_error(
+        response,
+        expected_status=403,
+        expected_message="Permission denied"
+    )
 
 
 def test_admin_can_access_admin_profile():
@@ -100,7 +101,7 @@ def test_admin_can_access_admin_profile():
         headers=headers
     )
 
-    print("ADMIN OWN PROFILE:")
+    print("ADMIN USE OWN PROFILE:")
     print(response.status_code)
     print(response.text)
 

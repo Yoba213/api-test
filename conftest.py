@@ -1,23 +1,22 @@
 import pytest
 import requests
 
-BASE_URL = "https://secby.ru"
-
-REGISTER_URL = "/api/auth/register"
-LOGIN_URL = "/api/auth/login"
-DELETE_URL = "/api/profiles"
-
-ADMIN_USERNAME = "admin"
-ADMIN_PASSWORD = "admin123"
-
+from utils.api_helpers import (
+    BASE_URL,
+    LOGIN_URL,
+    DELETE_URL,
+    REGISTER_URL,
+    ADMIN_USERNAME,
+    ADMIN_PASSWORD,
+)
 
 @pytest.fixture
 def test_user():
 
     user_data = {
-        "username": "test_user555333",
-        "email": "test_user555333@test.com",
-        "password": "TestPassword555333"
+        "username": "test_user55333",
+        "email": "test_user55333@test.com",
+        "password": "TestPassword55333"
     }
 
     register_response = requests.post(
@@ -31,6 +30,7 @@ def test_user():
 
     assert register_response.status_code == 200
 
+#обработка исключений
     try:
         register_json = register_response.json()
     except Exception as e:
